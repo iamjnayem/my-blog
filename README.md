@@ -55,51 +55,59 @@
 ### Installation Steps
 
 #### 1. Clone the Repository
-\`\`\`bash
+```
 git clone https://github.com/your-username/devjourney.git
+```
+#### 2. Go to the Project Directory
+```
 cd devjourney
-\`\`\`
+```
 
-#### 2. Install Backend Dependencies
-\`\`\`bash
+#### 3. Install Backend Dependencies
+```
 composer install
+```
+#### 4. Copy example env file
+```
 cp .env.example .env
-php artisan key:generate
-\`\`\`
+```
 
-Update the \`.env\` file with your database credentials:
-\`\`\`env
+#### 5. Generate APP Key
+```
+php artisan key:generate
+```
+
+#### 6. Update the \`.env\` file with your database credentials:
+```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=devjourney
 DB_USERNAME=root
 DB_PASSWORD=
-\`\`\`
+```
 
-Run migrations and seed the database:
-\`\`\`bash
+#### 7. Run migrations and seed the database:
+```
 php artisan migrate --seed
-\`\`\`
+```
 
-#### 3. Install Frontend Dependencies
+#### 8. Install Frontend Dependencies
 Navigate to the \`resources/js\` directory and install Node.js dependencies:
-\`\`\`bash
+```
 npm install
-\`\`\`
-
-Compile frontend assets:
-\`\`\`bash
+```
+#### 9. Compile frontend assets:
+```
 npm run dev
-\`\`\`
+```
 
-#### 4. Start the Application
-Start the Laravel development server:
-\`\`\`bash
+#### 10. Start the Application From Root directory of project
+```
 php artisan serve
-\`\`\`
+```
 
-The app will be available at \`http://localhost:8000\`.
+The app will be available at \`http://localhost:8000`.
 
 ---
 
@@ -114,6 +122,6 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 For questions or feedback, feel free to reach out:
 
 - Email: iamj.nayem@gmail.com
-- GitHub: [Your GitHub Profile](https://github.com/iamjnayem/)
-- LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/jnayem/)
+- [Github](https://github.com/iamjnayem/)
+- [LinkedIn](https://www.linkedin.com/in/jnayem/)
 
