@@ -113,7 +113,8 @@ const Home = () => {
                 {/* Blog Content */}
                 <div className="flex-1 md:mr-8">
                     {/* Tabs */}
-                    <div className={`flex border-b ${darkMode ? 'border-gray-700' : 'border-green-200'} mb-6`}>
+                    <div className={`flex border-b ${darkMode ? 'border-gray-700 bg-gray-900' : 'border-green-200 bg-white'} mb-6 sticky top-19.5 z-10`}>
+
                         <button
                             onClick={() => setActiveTab('latest')}
                             className={`py-2 px-4 font-medium ${activeTab === 'latest' ? (darkMode ? 'text-green-300 border-b-2 border-green-300' : 'text-green-600 border-b-2 border-green-600') : (darkMode ? 'text-gray-400' : 'text-gray-600')}`}
