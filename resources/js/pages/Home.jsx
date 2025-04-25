@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiSun, FiMoon, FiSearch, FiBookmark, FiUser, FiSettings } from 'react-icons/fi';
 import Header from '../components/Header';
 import QuickLinks from '../components/QuickLinks';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
     const [darkMode, setDarkMode] = useState(false);
@@ -126,12 +127,19 @@ const Home = () => {
                                         <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{blog.date}</span>
                                     </div>
                                     <p className={`mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{blog.excerpt}</p>
-                                    <a
+                                    {/* <a
                                         href={`/blog/${blog.id}`}
                                         className={`inline-flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
                                     >
                                         ...Read more
-                                    </a>
+                                    </a> */}
+
+                                    <Link
+                                        to={`/blog/${blog.id}`}
+                                        className={`inline-flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
+                                    >
+                                        ...Read more
+                                    </Link>
                                 </article>
                             ))}
                         </div>
