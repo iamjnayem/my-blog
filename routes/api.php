@@ -10,13 +10,17 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
+
+Route::get('/blogs', [BlogController::class, 'index'])
+    ->name('blogs.index');
+Route::get('/blogs/{id}', [BlogController::class, 'show'])
+    ->name('blogs.show');
+
+
 Route::post('/generate-token', [AuthController::class, 'generateTokenForMe'])
     ->name('generate-token');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/blogs', [BlogController::class, 'index'])
-        ->name('blogs.index');
-    Route::get('/blogs/{id}', [BlogController::class, 'show'])
-        ->name('blogs.show');
+
 });
 

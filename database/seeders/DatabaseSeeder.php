@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\BlogSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\CategorySeeder;
+use Database\Seeders\StatusCodeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategorySeeder::class,
             BlogSeeder::class,
+            StatusCodeSeeder::class,
         ]);
     }
 }
