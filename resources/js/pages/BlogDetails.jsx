@@ -2,12 +2,27 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; // For accessing route parameters
 import { FiArrowLeft, FiBookmark, FiShare2 } from 'react-icons/fi';
 import Header from '../components/Header';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css';
 
 const BlogDetails = () => {
     const { id } = useParams(); // Get the blog ID from the URL
     const [darkMode, setDarkMode] = useState(false);
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentDate, setCurrentDate] = useState('');
+
+    // Set current date
+    useEffect(() => {
+        const date = new Date();
+        setCurrentDate(date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }));
+    }, []);
+
 
     // Simulated API call to fetch blog data
     useEffect(() => {
@@ -26,9 +41,9 @@ const BlogDetails = () => {
                             <p>React 18 introduces several groundbreaking features that enhance performance and developer experience. Below are some highlights:</p>
                             <h3>Concurrent Rendering</h3>
                             <p>React 18 introduces concurrent rendering, which allows React to work on multiple tasks simultaneously without blocking the main thread.</p>
+                            <pre><code class="language-js">const example = () => {\n  console.log('Hello, world!');\n};</code></pre>
                             <h3>Automatic Batching</h3>
                             <p>Automatic batching groups multiple state updates into a single re-render, improving performance.</p>
-                            <p>These changes make React more efficient and scalable for modern web applications.</p>
                         `,
                         isPopular: true,
                     },
@@ -76,6 +91,14 @@ const BlogDetails = () => {
         fetchData();
     }, [id]);
 
+
+    // Highlight code blocks after rendering
+    useEffect(() => {
+        if (blog) {
+            Prism.highlightAll(); // Apply Prism.js highlighting to all code blocks
+        }
+    }, [blog, darkMode]);
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -95,7 +118,7 @@ const BlogDetails = () => {
     return (
         <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}>
             {/* Header */}
-            <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} />
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-6">
