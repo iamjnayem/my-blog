@@ -67,7 +67,8 @@ const Home = () => {
     const filteredBlogs = () => {
         switch (activeTab) {
             case 'popular':
-                return blogs.filter(blog => blog.isPopular);
+                return blogs;
+                // return blogs.filter(blog => blog.isPopular);
             case 'all':
                 return blogs;
             case 'latest':
