@@ -58,16 +58,32 @@ class BlogController extends Controller
        {
 
             $response = getResponse(500, [], ['Something went wrong']);
-            return $response;
+            return response()->json($response, 500);
        }
     }
 
     public function show($id)
     {
-        // Fetch a single blog by its ID
-        $blog = Blog::findOrFail($id);
+       try{
+            // Find the blog by ID
+            $blog = Blog::with(['author:id,name', 'category:id,name'])->find($id);
 
-        // Return the blog as a JSON response
-        return response()->json($blog);
+            if (!$blog) {
+                $response = getResponse(404, [], ['Blog not found']);
+                return response()->json($response, 404);
+            }
+
+            // Increment the view count
+            $blog->increment('view_count');
+
+            $response = getResponse(200, $blog);
+
+            return response()->json($response, 200);
+
+       }catch(Exception $e)
+       {
+            $response = getResponse(500, [], ['Something went wrong']);
+            return response()->json($response, 500);
+       }
     }
 }

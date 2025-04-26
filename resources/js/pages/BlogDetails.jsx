@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; // For accessing route parameters
-import { FiArrowLeft, FiBookmark, FiShare2 } from 'react-icons/fi';
+import { FiArrowLeft, FiBookmark, FiShare2, FiUser, FiSettings } from 'react-icons/fi';
 import Header from '../components/Header';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
+import QuickLinks from '../components/QuickLinks';
 
 const BlogDetails = () => {
     const { id } = useParams(); // Get the blog ID from the URL
@@ -11,6 +12,13 @@ const BlogDetails = () => {
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState('');
+
+    // Define quick links dynamically
+    const quickLinks = [
+        { href: '#', icon: <FiUser />, label: 'Profile' },
+        { href: '#', icon: <FiBookmark />, label: 'Bookmarks' },
+        { href: '#', icon: <FiSettings />, label: 'Settings' },
+    ];
 
     // Set current date
     useEffect(() => {
@@ -23,74 +31,27 @@ const BlogDetails = () => {
         }));
     }, []);
 
-
-    // Simulated API call to fetch blog data
+    // Fetch blog data from the API
     useEffect(() => {
-        setLoading(true);
-
-        // Simulate fetching blog data by ID
-        const fetchData = async () => {
-            setTimeout(() => {
-                const sampleBlogs = [
-                    {
-                        id: 1,
-                        title: 'React 18 New Features Explained',
-                        author: 'You',
-                        date: '2023-05-15',
-                        content: `
-                            <p>React 18 introduces several groundbreaking features that enhance performance and developer experience. Below are some highlights:</p>
-                            <h3>Concurrent Rendering</h3>
-                            <p>React 18 introduces concurrent rendering, which allows React to work on multiple tasks simultaneously without blocking the main thread.</p>
-                            <pre><code class="language-js">const example = () => {\n  console.log('Hello, world!');\n};</code></pre>
-                            <h3>Automatic Batching</h3>
-                            <p>Automatic batching groups multiple state updates into a single re-render, improving performance.</p>
-                        `,
-                        isPopular: true,
-                    },
-                    {
-                        id: 2,
-                        title: 'Mastering Tailwind CSS for Rapid UI Development',
-                        author: 'You',
-                        date: '2023-05-10',
-                        content: `
-                            <p>Tailwind CSS is a utility-first CSS framework that helps developers build responsive and customizable user interfaces quickly.</p>
-                            <h3>Why Use Tailwind?</h3>
-                            <ul>
-                                <li>Highly customizable with configuration files.</li>
-                                <li>No need to write custom CSS classes.</li>
-                                <li>Built-in responsive design utilities.</li>
-                            </ul>
-                            <p>With Tailwind, you can focus on building components rather than writing repetitive CSS.</p>
-                        `,
-                        isPopular: true,
-                    },
-                    {
-                        id: 3,
-                        title: 'Laravel with React: The Perfect Full-Stack Combo',
-                        author: 'You',
-                        date: '2023-05-05',
-                        content: `
-                            <p>Laravel and React together provide a powerful full-stack solution for building modern web applications.</p>
-                            <h3>Backend with Laravel</h3>
-                            <p>Laravel provides a robust backend framework with features like Eloquent ORM, routing, and authentication.</p>
-                            <h3>Frontend with React</h3>
-                            <p>React allows you to build dynamic, interactive user interfaces with reusable components.</p>
-                            <p>Together, they form a seamless stack for building scalable applications.</p>
-                        `,
-                    },
-                ];
-
-                const selectedBlog = sampleBlogs.find((blog) => blog.id === parseInt(id));
-                if (selectedBlog) {
-                    setBlog(selectedBlog);
+        const fetchBlog = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`/api/blogs/${id}`); // Replace with your API endpoint
+                if (!response.ok) {
+                    throw new Error('Blog not found');
                 }
+                const data = await response.json();
+                setBlog(data.data); // Adjust based on your API response structure
+            } catch (error) {
+                console.error('Error fetching blog:', error.message);
+                setBlog(null); // Set blog to null if there's an error
+            } finally {
                 setLoading(false);
-            }, 800);
+            }
         };
 
-        fetchData();
+        fetchBlog();
     }, [id]);
-
 
     // Highlight code blocks after rendering
     useEffect(() => {
@@ -132,31 +93,41 @@ const BlogDetails = () => {
                     </button>
                 </div>
 
-                {/* Blog Content */}
-                <article className={`p-6 rounded-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-green-50 hover:bg-green-100'}`}>
-                    <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>{blog.title}</h1>
-                    <div className="flex items-center text-sm mb-4">
-                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author}</span>
-                        <span className={`mx-2 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
-                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{blog.date}</span>
-                    </div>
-                    <div
-                        className={`prose max-w-none ${darkMode ? 'prose-invert' : ''}`}
-                        dangerouslySetInnerHTML={{ __html: blog.content }}
-                    />
-                    <div className="flex items-center mt-6 space-x-4">
-                        <button
-                            className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
-                        >
-                            <FiBookmark className="mr-2" /> Bookmark
-                        </button>
-                        <button
-                            className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
-                        >
-                            <FiShare2 className="mr-2" /> Share
-                        </button>
-                    </div>
-                </article>
+                {/* Layout with Blog Details and Sticky Quick Links */}
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Blog Content */}
+                    <article className={`flex-1 p-6 rounded-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-green-50 hover:bg-green-100'}`}>
+                        <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>{blog.title}</h1>
+                        <div className="flex items-center text-sm mb-4">
+                            <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author?.name || 'Unknown Author'}</span>
+                            <span className={`mx-2 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
+                            <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                                {new Date(blog.created_at).toLocaleDateString()}
+                            </span>
+                        </div>
+                        <div
+                            className={`prose max-w-none ${darkMode ? 'prose-invert' : ''}`}
+                            dangerouslySetInnerHTML={{ __html: blog.content }}
+                        />
+                        <div className="flex items-center mt-6 space-x-4">
+                            <button
+                                className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
+                            >
+                                <FiBookmark className="mr-2" /> Bookmark
+                            </button>
+                            <button
+                                className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
+                            >
+                                <FiShare2 className="mr-2" /> Share
+                            </button>
+                        </div>
+                    </article>
+
+                    {/* Quick Links - Sticky Sidebar */}
+                    <aside className="md:w-64 flex-shrink-0 sticky top-20 self-start">
+                        <QuickLinks darkMode={darkMode} links={quickLinks} />
+                    </aside>
+                </div>
             </main>
         </div>
     );

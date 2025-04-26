@@ -18,38 +18,25 @@ const Home = () => {
         { href: '#', icon: <FiSettings />, label: 'Settings' },
     ];
 
-    // Sample blog data - replace with your actual data fetching logic
+    // Fetch blogs from the API
     useEffect(() => {
-        setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setBlogs([
-                {
-                    id: 1,
-                    title: 'React 18 New Features Explained',
-                    author: 'You',
-                    date: '2023-05-15',
-                    excerpt: 'Discover the latest features in React 18 including concurrent rendering, automatic batching and more...',
-                    isPopular: true
-                },
-                {
-                    id: 2,
-                    title: 'Mastering Tailwind CSS for Rapid UI Development',
-                    author: 'You',
-                    date: '2023-05-10',
-                    excerpt: 'Learn how to leverage Tailwind CSS to build beautiful, responsive interfaces in record time...',
-                    isPopular: true
-                },
-                {
-                    id: 3,
-                    title: 'Laravel with React: The Perfect Full-Stack Combo',
-                    author: 'You',
-                    date: '2023-05-05',
-                    excerpt: 'Explore how to integrate Laravel backend with React frontend for powerful full-stack applications...'
-                },
-            ]);
-            setLoading(false);
-        }, 800);
+        const fetchBlogs = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/blogs'); // Replace with your API endpoint
+                if (!response.ok) {
+                    throw new Error('Failed to fetch blogs');
+                }
+                const data = await response.json();
+                setBlogs(data.data.blogs); // Adjust based on your API response structure
+            } catch (error) {
+                console.error('Error fetching blogs:', error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBlogs();
     }, []);
 
     // Set current date
@@ -67,13 +54,12 @@ const Home = () => {
     const filteredBlogs = () => {
         switch (activeTab) {
             case 'popular':
-                return blogs;
-                // return blogs.filter(blog => blog.isPopular);
+                return blogs.filter(blog => blog.is_popular === 1); // Filter popular blogs
             case 'all':
-                return blogs;
+                return blogs; // Show all blogs
             case 'latest':
             default:
-                return [...blogs].sort((a, b) => new Date(b.date) - new Date(a.date));
+                return [...blogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by latest
         }
     };
 
@@ -123,18 +109,11 @@ const Home = () => {
                                 >
                                     <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>{blog.title}</h2>
                                     <div className="flex items-center text-sm mb-3">
-                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author}</span>
+                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author?.name || 'Unknown Author'}</span>
                                         <span className={`mx-2 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
-                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{blog.date}</span>
+                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{new Date(blog.created_at).toLocaleDateString()}</span>
                                     </div>
                                     <p className={`mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{blog.excerpt}</p>
-                                    {/* <a
-                                        href={`/blog/${blog.id}`}
-                                        className={`inline-flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
-                                    >
-                                        ...Read more
-                                    </a> */}
-
                                     <Link
                                         to={`/blog/${blog.id}`}
                                         className={`inline-flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
