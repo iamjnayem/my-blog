@@ -49,20 +49,16 @@ class BlogController extends Controller
             $blogs = $query->with(['author:id,name', 'category:id,name'])->paginate($limit, ['*'], 'page', $page);
 
             $updatedBlogs = array_map(function ($blog) {
-                // Check if image exists
                 if (!empty($blog['image'])) {
-                    // Generate full URL
-                    $blog['image_url'] = asset('storage/public' . $blog['image']);
+                    $blog['image_url'] = asset('storage/' . $blog['image']);
                 } else {
-                    // If no image, you can optionally set a placeholder or null
                     $blog['image_url'] = null;
                 }
 
-                // Optionally: remove the old 'image' field if you don't want it at all
                 unset($blog['image']);
 
                 return $blog;
-            }, $blogs);
+            }, $blogs->items());
 
             $blogs = [
                 'blogs' => $updatedBlogs,
@@ -77,7 +73,7 @@ class BlogController extends Controller
             return response()->json($response, 200);
 
         } catch (Exception $e) {
-
+            dd($e->getMessage());
             $response = getResponse(500, [], ['Something went wrong']);
             return response()->json($response, 500);
         }
