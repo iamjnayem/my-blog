@@ -10,6 +10,7 @@ const Home = () => {
     const [currentDate, setCurrentDate] = useState('');
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Define quick links dynamically
     const quickLinks = [
@@ -52,21 +53,32 @@ const Home = () => {
 
     // Filter blogs based on active tab
     const filteredBlogs = () => {
-        switch (activeTab) {
-            case 'popular':
-                return blogs.filter(blog => blog.is_popular === 1); // Filter popular blogs
-            case 'all':
-                return blogs; // Show all blogs
-            case 'latest':
-            default:
-                return [...blogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by latest
+        let filtered = [...blogs];
+
+        // Filter by active tab
+        if (activeTab === 'popular') {
+            filtered = filtered.filter(blog => blog.is_popular === 1);
+        } else if (activeTab === 'latest') {
+            filtered = filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         }
+
+        // Filter by search query
+        if (searchQuery.trim() !== '') {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(blog =>
+                blog.title.toLowerCase().includes(query) ||
+                blog.excerpt.toLowerCase().includes(query)
+            );
+        }
+
+        return filtered;
     };
 
     return (
         <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}>
             {/* Header */}
-            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} />
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchQuery={searchQuery} 
+            setSearchQuery={setSearchQuery} />
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-6 flex flex-col md:flex-row">

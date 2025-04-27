@@ -12,6 +12,8 @@ const BlogDetails = () => {
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    
 
     // Define quick links dynamically
     const quickLinks = [
@@ -79,7 +81,8 @@ const BlogDetails = () => {
     return (
         <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}>
             {/* Header */}
-            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} />
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchQuery={searchQuery} 
+            setSearchQuery={setSearchQuery} />
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-6">

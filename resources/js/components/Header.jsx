@@ -1,7 +1,9 @@
 // Header.js
 import { FiSearch, FiSun, FiMoon } from 'react-icons/fi';
+import debounce from 'lodash.debounce';
 
-const Header = ({ darkMode, setDarkMode, currentDate }) => {
+const Header = ({ darkMode, setDarkMode, currentDate, searchQuery, setSearchQuery }) => {
+    const debouncedSetSearchQuery = debounce((value) => setSearchQuery(value), 300);
     return (
         <header className={`sticky top-0 z-10 ${darkMode ? 'bg-gray-800' : 'bg-green-50'} shadow-md`}>
             <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -18,14 +20,16 @@ const Header = ({ darkMode, setDarkMode, currentDate }) => {
 
                 {/* Search Box */}
                 <div className="flex-1 max-w-md mx-4">
-                    <div className={`relative ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        <input
-                            type="text"
-                            placeholder="Search blogs..."
-                            className={`w-full py-2 px-4 pl-10 rounded-lg focus:outline-none focus:ring-2 ${darkMode ? 'bg-gray-700 focus:ring-green-500' : 'bg-white focus:ring-green-300 border border-gray-300'}`}
-                        />
-                        <FiSearch className="absolute left-3 top-3" />
-                    </div>
+                        <div className={`relative ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <input
+                                type="text"
+                                placeholder="Search blogs..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className={`w-full py-2 px-4 pl-10 rounded-lg focus:outline-none focus:ring-2 ${darkMode ? 'bg-gray-700 focus:ring-green-500' : 'bg-white focus:ring-green-300 border border-gray-300'}`}
+                            />
+                            <FiSearch className="absolute left-3 top-3" />
+                        </div>
                 </div>
 
                 {/* Date and Dark Mode Toggle */}

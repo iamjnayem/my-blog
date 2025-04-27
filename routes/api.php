@@ -17,6 +17,8 @@ Route::get('/blogs/{id}', [BlogController::class, 'show'])
     ->name('blogs.show');
 
 
+
+
 Route::post('/generate-token', [AuthController::class, 'generateTokenForMe'])
     ->name('generate-token');
 
