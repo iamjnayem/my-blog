@@ -28,7 +28,7 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * The attributes that should be 
+     * The attributes that should be
      * hidden for serialization.
      *
      * @var list<string>
@@ -58,7 +58,6 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-	    Log::info("the email is " . $this->email);
 	    return true;
     }
 }

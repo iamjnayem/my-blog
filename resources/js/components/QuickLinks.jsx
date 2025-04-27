@@ -1,13 +1,20 @@
 // QuickLinks.js
 import { FiUser, FiBookmark, FiSettings } from 'react-icons/fi';
 
-const QuickLinks = ({ darkMode, links }) => {
+  // Define quick links dynamically
+const quickLinks = [
+    { href: '#', icon: <FiUser />, label: 'Profile' },
+    // { href: '#', icon: <FiBookmark />, label: 'Bookmarks' },
+    // { href: '#', icon: <FiSettings />, label: 'Settings' },
+];
+
+const QuickLinks = ({ darkMode }) => {
     return (
         <div className="md:w-64 mt-6 md:mt-0">
             <div className={`sticky top-24 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-green-50'} shadow-md`}>
                 <h3 className={`font-bold mb-4 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>Quick Links</h3>
                 <ul className="space-y-3">
-                    {links.map((link, index) => (
+                    {quickLinks.map((link, index) => (
                         <li key={index}>
                             <a
                                 href={link.href}

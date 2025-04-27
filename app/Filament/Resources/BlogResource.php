@@ -1,17 +1,19 @@
 <?php
-
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use App\Models\Blog;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use App\Filament\Resources\BlogResource\Pages;
 use App\Filament\Resources\BlogResource\RelationManagers;
-use App\Models\Blog;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class BlogResource extends Resource
 {
@@ -36,33 +38,13 @@ class BlogResource extends Resource
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('excerpt')
-                            ->required()
-                            ->unique(ignoreRecord: true) // ignore unique on update
-                            ->maxLength(255),
-
-                        Forms\Components\Select::make('author_id')
-                            ->relationship('author', 'name')
-                            ->preload()
-                            ->searchable()
-                            ->required(),
-
                         Forms\Components\FileUpload::make('image')
                             ->image()
+                            ->maxSize(100)
                             ->nullable(),
 
                         Forms\Components\RichEditor::make('content')
                             ->required(),
-
-                        Forms\Components\Toggle::make('is_popular')
-                            ->label('Is Popular')
-                            ->default(false),
-
-                        Forms\Components\TextInput::make('view_count')
-                            ->label('View Count')
-                            ->numeric()
-                            ->default(0)
-                            ->disabled(), // maybe disable editing manually?
                     ]),
             ]);
     }
@@ -72,14 +54,7 @@ class BlogResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')->searchable(),
-                Tables\Columns\TextColumn::make('excerpt')->limit(50)->tooltip(fn($record) => $record->excerpt),
-                Tables\Columns\ImageColumn::make('image')->circular(),
                 Tables\Columns\TextColumn::make('category.name')->sortable(),
-                Tables\Columns\IconColumn::make('is_popular')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-star')
-                    ->falseIcon('heroicon-o-star'),
-                Tables\Columns\TextColumn::make('view_count')->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([
@@ -98,9 +73,7 @@ class BlogResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -111,4 +84,7 @@ class BlogResource extends Resource
             'edit' => Pages\EditBlog::route('/{record}/edit'),
         ];
     }
+
+
+  
 }

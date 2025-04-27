@@ -1,26 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; // For accessing route parameters
-import { FiArrowLeft, FiBookmark, FiShare2, FiUser, FiSettings } from 'react-icons/fi';
+import { FiArrowLeft, FiBookmark, FiShare2 } from 'react-icons/fi';
 import Header from '../components/Header';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 import QuickLinks from '../components/QuickLinks';
+import moment from 'moment';
 
 const BlogDetails = () => {
-    const { id } = useParams(); // Get the blog ID from the URL
+    const { slug } = useParams(); // Get the blog ID from the URL
     const [darkMode, setDarkMode] = useState(false);
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    
-
-    // Define quick links dynamically
-    const quickLinks = [
-        { href: '#', icon: <FiUser />, label: 'Profile' },
-        { href: '#', icon: <FiBookmark />, label: 'Bookmarks' },
-        { href: '#', icon: <FiSettings />, label: 'Settings' },
-    ];
 
     // Set current date
     useEffect(() => {
@@ -38,7 +31,7 @@ const BlogDetails = () => {
         const fetchBlog = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`/api/blogs/${id}`); // Replace with your API endpoint
+                const response = await fetch(`/api/blogs/${slug}`); // Replace with your API endpoint
                 if (!response.ok) {
                     throw new Error('Blog not found');
                 }
@@ -53,7 +46,7 @@ const BlogDetails = () => {
         };
 
         fetchBlog();
-    }, [id]);
+    }, [slug]);
 
     // Highlight code blocks after rendering
     useEffect(() => {
@@ -81,7 +74,7 @@ const BlogDetails = () => {
     return (
         <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}>
             {/* Header */}
-            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchQuery={searchQuery} 
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchQuery={searchQuery}
             setSearchQuery={setSearchQuery} />
 
             {/* Main Content */}
@@ -105,14 +98,14 @@ const BlogDetails = () => {
                             <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author?.name || 'Unknown Author'}</span>
                             <span className={`mx-2 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
                             <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
-                                {new Date(blog.created_at).toLocaleDateString()}
+                                {moment(blog.created_at).format('DD-MM-YYYY')}
                             </span>
                         </div>
                         <div
                             className={`prose max-w-none ${darkMode ? 'prose-invert' : ''}`}
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
-                        <div className="flex items-center mt-6 space-x-4">
+                        {/* <div className="flex items-center mt-6 space-x-4">
                             <button
                                 className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
                             >
@@ -123,12 +116,12 @@ const BlogDetails = () => {
                             >
                                 <FiShare2 className="mr-2" /> Share
                             </button>
-                        </div>
+                        </div> */}
                     </article>
 
                     {/* Quick Links - Sticky Sidebar */}
                     <aside className="md:w-64 flex-shrink-0 sticky top-20 self-start">
-                        <QuickLinks darkMode={darkMode} links={quickLinks} />
+                        <QuickLinks darkMode={darkMode}  />
                     </aside>
                 </div>
             </main>

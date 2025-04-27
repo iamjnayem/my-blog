@@ -14,15 +14,15 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::create([
-            'name' => 'Electronics',
+            'name' => 'Software Engineering',
             'status' => 1
         ]);
         Category::create([
-            'name' => 'Fashion',
+            'name' => 'Artificial Intelligence',
             'status' => 1
         ]);
         Category::create([
-            'name' => 'Home & Garden',
+            'name' => 'Carreer',
             'status' => 1
         ]);
     }

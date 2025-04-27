@@ -3,6 +3,8 @@ import { FiSun, FiMoon, FiSearch, FiBookmark, FiUser, FiSettings } from 'react-i
 import Header from '../components/Header';
 import QuickLinks from '../components/QuickLinks';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import { BiTrim } from 'react-icons/bi';
 
 const Home = () => {
     const [darkMode, setDarkMode] = useState(false);
@@ -10,35 +12,77 @@ const Home = () => {
     const [currentDate, setCurrentDate] = useState('');
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        lastPage: 1,
+        total: 0,
+        perPage: 10,
+    });
 
-    // Define quick links dynamically
-    const quickLinks = [
-        { href: '#', icon: <FiUser />, label: 'Profile' },
-        { href: '#', icon: <FiBookmark />, label: 'Bookmarks' },
-        { href: '#', icon: <FiSettings />, label: 'Settings' },
-    ];
 
-    // Fetch blogs from the API
-    useEffect(() => {
-        const fetchBlogs = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch('/api/blogs'); // Replace with your API endpoint
-                if (!response.ok) {
-                    throw new Error('Failed to fetch blogs');
-                }
-                const data = await response.json();
-                setBlogs(data.data.blogs); // Adjust based on your API response structure
-            } catch (error) {
-                console.error('Error fetching blogs:', error.message);
-            } finally {
-                setLoading(false);
+    // Fetch blogs from the API with pagination and search
+    const fetchBlogs = async (page = 1) => {
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                page: page,
+                limit: pagination.perPage,
+                // search: searchQuery,
+                tab: activeTab,
+            }).toString();
+
+            const response = await fetch(`/api/blogs?${queryParams}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch blogs');
             }
-        };
+            const responseDetails = await response.json();
 
-        fetchBlogs();
-    }, []);
+
+            setBlogs(responseDetails.data.blogs);
+            setPagination({
+                currentPage: responseDetails.data.current_page,
+                lastPage: responseDetails.data.last_page,
+                total: responseDetails.data.total,
+                perPage: responseDetails.data.per_page,
+            });
+        } catch (error) {
+            console.error('Error fetching blogs:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const searchBlogs = async (query) => {
+        
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                page: 1,
+                limit: 10,
+                search: query,
+                tab: activeTab,
+            }).toString();
+
+            const response = await fetch(`/api/blogs?${queryParams}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch blogs');
+            }
+            const responseDetails = await response.json();
+
+
+            setBlogs(responseDetails.data.blogs);
+            setPagination({
+                currentPage: responseDetails.data.current_page,
+                lastPage: responseDetails.data.last_page,
+                total: responseDetails.data.total,
+                perPage: responseDetails.data.per_page,
+            });
+        } catch (error) {
+            console.error('Error fetching blogs:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Set current date
     useEffect(() => {
@@ -47,38 +91,21 @@ const Home = () => {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
         }));
+        fetchBlogs();
     }, []);
 
-    // Filter blogs based on active tab
-    const filteredBlogs = () => {
-        let filtered = [...blogs];
 
-        // Filter by active tab
-        if (activeTab === 'popular') {
-            filtered = filtered.filter(blog => blog.is_popular === 1);
-        } else if (activeTab === 'latest') {
-            filtered = filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        }
-
-        // Filter by search query
-        if (searchQuery.trim() !== '') {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(blog =>
-                blog.title.toLowerCase().includes(query) ||
-                blog.excerpt.toLowerCase().includes(query)
-            );
-        }
-
-        return filtered;
+    // Handle page change
+    const handlePageChange = (page) => {
+        fetchBlogs(page);
     };
 
     return (
         <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}>
             {/* Header */}
-            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchQuery={searchQuery} 
-            setSearchQuery={setSearchQuery} />
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} currentDate={currentDate} searchBlogs={searchBlogs}/>
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-6 flex flex-col md:flex-row">
@@ -86,7 +113,6 @@ const Home = () => {
                 <div className="flex-1 md:mr-8">
                     {/* Tabs */}
                     <div className={`flex border-b ${darkMode ? 'border-gray-700 bg-gray-900' : 'border-green-200 bg-white'} mb-6 sticky top-19.5 z-10`}>
-
                         <button
                             onClick={() => setActiveTab('latest')}
                             className={`py-2 px-4 font-medium ${activeTab === 'latest' ? (darkMode ? 'text-green-300 border-b-2 border-green-300' : 'text-green-600 border-b-2 border-green-600') : (darkMode ? 'text-gray-400' : 'text-gray-600')}`}
@@ -114,7 +140,7 @@ const Home = () => {
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            {filteredBlogs().map(blog => (
+                            {blogs.map(blog => (
                                 <article
                                     key={blog.id}
                                     className={`p-6 rounded-lg transition-all duration-300 hover:shadow-lg ${darkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-green-50 hover:bg-green-100'}`}
@@ -123,11 +149,11 @@ const Home = () => {
                                     <div className="flex items-center text-sm mb-3">
                                         <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>By {blog.author?.name || 'Unknown Author'}</span>
                                         <span className={`mx-2 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
-                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{new Date(blog.created_at).toLocaleDateString()}</span>
+                                        <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{moment(blog.created_at).format('DD-MM-YYYY')}</span>
                                     </div>
                                     <p className={`mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{blog.excerpt}</p>
                                     <Link
-                                        to={`/blog/${blog.id}`}
+                                        to={`/blog/${blog.slug}`}
                                         className={`inline-flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
                                     >
                                         ...Read more
@@ -136,11 +162,32 @@ const Home = () => {
                             ))}
                         </div>
                     )}
+
+                    {/* Pagination */}
+                    <div className="flex justify-center mt-8">
+                        <nav className="flex space-x-2">
+                            {Array.from({ length: pagination.lastPage }, (_, i) => i + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-3 py-1 rounded-md transition-colors duration-300 ${page === pagination.currentPage
+                                        ? darkMode
+                                            ? 'bg-green-600 text-white'
+                                            : 'bg-green-500 text-white'
+                                        : darkMode
+                                            ? 'bg-gray-700 text-gray-400 hover:bg-green-600 hover:text-white'
+                                            : 'bg-gray-200 text-gray-600 hover:bg-green-500 hover:text-white'
+                                        }`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
                 </div>
 
                 {/* Quick Links - Sticky Sidebar */}
-                <QuickLinks darkMode={darkMode} links={quickLinks} />
-
+                <QuickLinks darkMode={darkMode} />
             </main>
         </div>
     );

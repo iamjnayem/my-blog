@@ -13,7 +13,7 @@ use App\Http\Controllers\AuthController;
 
 Route::get('/blogs', [BlogController::class, 'index'])
     ->name('blogs.index');
-Route::get('/blogs/{id}', [BlogController::class, 'show'])
+Route::get('/blogs/{slug}', [BlogController::class, 'show'])
     ->name('blogs.show');
 
 
