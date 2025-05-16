@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProjectController;
 
 
 
@@ -22,7 +23,10 @@ Route::get('/blogs/{slug}', [BlogController::class, 'show'])
 
 Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories.index');
-
+Route::get('/projects', [ProjectController::class, 'index'])
+    ->name('projects.index');   
+Route::get('/projects/{id}', [ProjectController::class, 'show'])
+    ->name('projects.show');
 
 
 

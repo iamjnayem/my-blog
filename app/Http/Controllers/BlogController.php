@@ -80,7 +80,7 @@ class BlogController extends Controller
             return response()->json($response, 200);
 
         } catch (Exception $e) {
-            dd($e->getMessage());
+           
             $response = getResponse(500, [], ['Something went wrong']);
             return response()->json($response, 500);
         }

@@ -1,10 +1,11 @@
 // QuickLinks.js
-import { FiUser, FiBookmark, FiSettings } from 'react-icons/fi';
+import { FiUser, FiCode, FiBriefcase,FiHome } from 'react-icons/fi';
 
   // Define quick links dynamically
 const quickLinks = [
-    { href: '#', icon: <FiUser />, label: 'Profile' },
-    // { href: '#', icon: <FiBookmark />, label: 'Bookmarks' },
+    { href: '/profile', icon: <FiUser />, label: 'About Me' },
+    { href: '/projects', icon: <FiCode />, label: 'Projects' },
+    { href: '/', icon: <FiHome />, label: 'Home' },
     // { href: '#', icon: <FiSettings />, label: 'Settings' },
 ];
 
