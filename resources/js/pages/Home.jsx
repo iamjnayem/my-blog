@@ -18,6 +18,8 @@ const Home = () => {
         total: 0,
         perPage: 10,
     });
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null); 
 
 
     // Fetch blogs from the API with pagination and search
@@ -29,6 +31,7 @@ const Home = () => {
                 limit: pagination.perPage,
                 // search: searchQuery,
                 tab: activeTab,
+                category: selectedCategory,
             }).toString();
 
             const response = await fetch(`/api/blogs?${queryParams}`);
@@ -53,7 +56,7 @@ const Home = () => {
     };
 
     const searchBlogs = async (query) => {
-        
+       
         setLoading(true);
         try {
             const queryParams = new URLSearchParams({
@@ -94,8 +97,27 @@ const Home = () => {
             day: 'numeric',
         }));
         fetchBlogs();
-    }, []);
+    }, [selectedCategory]);
 
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/categories');
+                if (!response.ok) throw new Error('Failed to fetch categories');
+                const categories = await response.json();        
+                setCategories(categories.data || []);
+                setSelectedCategory(categories.data[0]?.id || null); 
+            } catch (error) {
+                console.error('Error fetching categories:', error.message);
+            }
+        };
+
+        fetchCategories();
+        
+        // fetchBlogs();
+    }, []);
+    
 
     // Handle page change
     const handlePageChange = (page) => {
@@ -131,6 +153,22 @@ const Home = () => {
                         >
                             All Blogs
                         </button>
+
+                        {/* // add search able drop down here */}
+                        <div className="relative ml-auto w-64 py-2">
+                            <select
+                                className={`px-4 py-2 rounded-md w-full appearance-none ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-800'} border ${darkMode ? 'border-gray-700' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                            >
+                                <option value="">Select A  Category</option>
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {/* <FiSearch className={`pointer-events-none absolute right-3 top-2.5 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} /> */}
+                        </div>
                     </div>
 
                     {/* Blog List */}

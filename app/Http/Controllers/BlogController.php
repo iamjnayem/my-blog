@@ -44,6 +44,12 @@ class BlogController extends Controller
                 $query->orderBy('created_at');
             }
 
+
+            if($request->has('category') && !empty($request->query('category'))) {
+                $categoryId = $request->query('category');
+                $query->where('category_id', $categoryId);
+            }
+
             // Paginate the results
             // Eager load relationships
             $blogs = $query->with(['author:id,name', 'category:id,name'])->paginate($limit, ['*'], 'page', $page);
