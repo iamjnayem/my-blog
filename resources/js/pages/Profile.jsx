@@ -37,7 +37,7 @@ const Profile = ({ darkMode }) => {
         ],
         education: [
             {
-                institution: 'Daffodil International University',
+                institution: 'Prime University',
                 degree: 'B.Sc in Computer Science & Engineering',
                 year: '2017 - 2021',
             },
