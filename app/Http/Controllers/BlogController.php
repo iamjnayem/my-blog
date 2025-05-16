@@ -44,8 +44,9 @@ class BlogController extends Controller
                 $query->orderBy('created_at');
             }
 
-
-            if($request->has('category') && !empty($request->query('category'))) {
+            
+            if($request->has('category') && $request->query('category') != "null") {
+                // Check if the category ID is valid
                 $categoryId = $request->query('category');
                 $query->where('category_id', $categoryId);
             }
