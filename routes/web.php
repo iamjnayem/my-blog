@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('react');
+	dd("home");
+	return view('react');
 });
 
 Route::fallback(function () {
