@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-	dd("home");
 	return view('react');
 });
 
