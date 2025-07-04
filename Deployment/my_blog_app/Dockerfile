@@ -11,10 +11,16 @@ RUN apt-get update && apt-get install -y \
     dnsutils \
     unzip \
     git \
+    ca-certificates \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Node.js v22 (from NodeSource)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && node -v && npm -v
 
 # Set working directory inside container
 WORKDIR /var/www/html
@@ -29,4 +35,3 @@ RUN chown -R www-data:www-data /var/www/html
 EXPOSE 9000
 
 CMD ["php-fpm"]
-

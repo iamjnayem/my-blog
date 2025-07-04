@@ -1,7 +1,7 @@
 
 services:
   app:
-    build: .
+    build: ./Deployment/my_blog_app/
     container_name: my_blog_app_container
     volumes:
       - .:/var/www/html   
@@ -9,18 +9,16 @@ services:
       - my_blog_net
 
   nginx:
-    image: nginx:latest
-    container_name: my_blog_nginx_container
-    ports:
-      - "8000:80"
-    # volumes:
-    #   - ./nginx/conf:/etc/nginx/conf.d   
-    #   - .:/var/www/html               
-    #   - ./logs/nginx:/var/log/nginx      
-    depends_on:
-      - app
-    networks:
-      - my_blog_net
+      build:
+        context: ./Deployment/nginx
+      container_name: my_blog_nginx_container
+      ports:
+        - "8000:80"
+      depends_on:
+        - app
+      networks:
+        - my_blog_net
+
 
 networks:
   my_blog_net:
