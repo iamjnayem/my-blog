@@ -9,7 +9,7 @@ services:
       - my_blog_net
 
   nginx:
-    image: my_blog_nginx:latest
+    image: nginx:latest
     container_name: my_blog_nginx_container
     ports:
       - "8000:80"
