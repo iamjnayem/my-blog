@@ -1,17 +1,16 @@
-version: "3.9"
 
 services:
-  php:
+  app:
     build: .
-    container_name: my_blog
+    container_name: my_blog_app_container
     volumes:
       - .:/var/www/html   
     networks:
-      - blog_net
+      - my_blog_net
 
   nginx:
-    image: nginx:latest
-    container_name: blog_nginx
+    image: my_blog_nginx:latest
+    container_name: my_blog_nginx_container
     ports:
       - "8000:80"
     # volumes:
@@ -19,10 +18,10 @@ services:
     #   - .:/var/www/html               
     #   - ./logs/nginx:/var/log/nginx      
     depends_on:
-      - php
+      - app
     networks:
-      - blog_net
+      - my_blog_net
 
 networks:
-  blog_net:
+  my_blog_net:
     driver: bridge
