@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  php:
+    build: .
+    container_name: my_blog
+    volumes:
+      - .:/var/www/html   
+    networks:
+      - blog_net
+
+  nginx:
+    image: nginx:latest
+    container_name: blog_nginx
+    ports:
+      - "8000:80"
+    # volumes:
+    #   - ./nginx/conf:/etc/nginx/conf.d   
+    #   - .:/var/www/html               
+    #   - ./logs/nginx:/var/log/nginx      
+    depends_on:
+      - php
+    networks:
+      - blog_net
+
+networks:
+  blog_net:
+    driver: bridge
