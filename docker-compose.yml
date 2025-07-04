@@ -1,7 +1,9 @@
 
 services:
   app:
-    build: ./Deployment/my_blog_app/
+    build:
+      context: .
+      dockerfile: ./Deployment/my_blog_app/Dockerfile
     container_name: my_blog_app_container
     volumes:
       - .:/var/www/html   
