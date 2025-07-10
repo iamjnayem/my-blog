@@ -1,0 +1,19 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_blog_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    image: my_blog_web
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel
+
+networks:
+  laravel:
