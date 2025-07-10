@@ -1,35 +1,49 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
+# 1) Install system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    nginx \
+    vim \
+    nano \
+    telnet \
+    unzip \
+    libicu-dev \
+    libzip-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
-    nginx \ 
-    telnet \
-    git \ 
-    vim \ 
-    nano
+  && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# 2) Configure GD with JPEG & FreeType
+RUN docker-php-ext-configure gd \
+      --with-freetype=/usr/include/ \
+      --with-jpeg=/usr/include/
 
-# Install Composer
+# 3) Install PHP extensions
+RUN docker-php-ext-install \
+      intl \
+      zip \
+      pdo_mysql \
+      mbstring \
+      exif \
+      pcntl \
+      bcmath \
+      gd
+
+# 4) Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configure Nginx
+# 5) Configure Nginx
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Set working directory
+# 6) Copy app & set workdir
 WORKDIR /var/www/html
 COPY . .
 
-# Expose ports
+# 7) Expose & start
 EXPOSE 80
-
-# Start Nginx and PHP-FPM
 CMD service nginx start && php-fpm
