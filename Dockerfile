@@ -1,49 +1,33 @@
-FROM php:8.2-fpm
+# Use Debian-based image for more flexibility
+FROM php:8.2-fpm-bullseye
 
-# 1) Install system dependencies for PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
     nginx \
-    vim \
-    nano \
-    telnet \
-    unzip \
-    libicu-dev \
-    libzip-dev \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-  && rm -rf /var/lib/apt/lists/*
+    zip \
+    unzip \
+    git \
+    curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2) Configure GD with JPEG & FreeType
-RUN docker-php-ext-configure gd \
-      --with-freetype=/usr/include/ \
-      --with-jpeg=/usr/include/
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mysqli exif gd xml mbstring opcache
 
-# 3) Install PHP extensions
-RUN docker-php-ext-install \
-      intl \
-      zip \
-      pdo_mysql \
-      mbstring \
-      exif \
-      pcntl \
-      bcmath \
-      gd
-
-# 4) Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# 5) Configure Nginx
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
-# 6) Copy app & set workdir
+# Set working directory
 WORKDIR /var/www/html
+
+# Copy local files into container
 COPY . .
 
-# 7) Expose & start
-EXPOSE 80
-CMD service nginx start && php-fpm
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Expose port 8000 internally
+EXPOSE 8000
+
+# Start Nginx and PHP-FPM
+CMD service nginx start && php-fpm8.2 -F
