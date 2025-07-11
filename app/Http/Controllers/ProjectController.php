@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -23,6 +24,9 @@ class ProjectController extends Controller
         } catch (Exception $e) {
         
             $response = getResponse(500, [], ['Something went wrong']);
+            Log::error('Error fetching projects: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return response()->json($response, 500);
         }
     }
@@ -35,6 +39,9 @@ class ProjectController extends Controller
             return response()->json($response, 200);
         } catch (Exception $e) {
             $response = getResponse(500, [], ['Something went wrong']);
+            Log::error('Error fetching project: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return response()->json($response, 500);
         }
     }

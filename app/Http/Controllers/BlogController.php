@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
@@ -82,6 +83,9 @@ class BlogController extends Controller
         } catch (Exception $e) {
            
             $response = getResponse(500, [], ['Something went wrong']);
+            Log::error('Error fetching blogs: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return response()->json($response, 500);
         }
     }
@@ -106,6 +110,9 @@ class BlogController extends Controller
 
         } catch (Exception $e) {
             $response = getResponse(500, [], ['Something went wrong']);
+            Log::error('Error fetching blog: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return response()->json($response, 500);
         }
     }

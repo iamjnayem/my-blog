@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -43,6 +44,9 @@ class AuthController extends Controller
 
         }catch(Exception $e){
             $response =getResponse(500, [],['Something went wrong']);
+            Log::error('Error generating token: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return response()->json($response, 500);
         }
     }
