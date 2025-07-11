@@ -43,8 +43,9 @@ class BlogResource extends Resource
                             ->maxSize(100)
                             ->nullable(),
 
-                        Forms\Components\RichEditor::make('content')
-                            ->required(),
+                        Forms\Components\Textarea::make('content')
+                            ->required()
+                            ->rows(10),
                     ]),
             ]);
     }

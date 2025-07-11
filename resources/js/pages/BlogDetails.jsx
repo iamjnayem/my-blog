@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // For accessing route parameters
+import { useParams } from 'react-router-dom'; 
 import { FiArrowLeft, FiBookmark, FiShare2 } from 'react-icons/fi';
 import Header from '../components/Header';
 import Prism from 'prismjs';
@@ -8,7 +8,7 @@ import QuickLinks from '../components/QuickLinks';
 import moment from 'moment';
 
 const BlogDetails = () => {
-    const { slug } = useParams(); // Get the blog ID from the URL
+    const { slug } = useParams(); 
     const [darkMode, setDarkMode] = useState(false);
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -31,15 +31,15 @@ const BlogDetails = () => {
         const fetchBlog = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`/api/blogs/${slug}`); // Replace with your API endpoint
+                const response = await fetch(`/api/blogs/${slug}`); 
                 if (!response.ok) {
                     throw new Error('Blog not found');
                 }
                 const data = await response.json();
-                setBlog(data.data); // Adjust based on your API response structure
+                setBlog(data.data); 
             } catch (error) {
                 console.error('Error fetching blog:', error.message);
-                setBlog(null); // Set blog to null if there's an error
+                setBlog(null); 
             } finally {
                 setLoading(false);
             }
@@ -48,10 +48,10 @@ const BlogDetails = () => {
         fetchBlog();
     }, [slug]);
 
-    // Highlight code blocks after rendering
+    
     useEffect(() => {
         if (blog) {
-            Prism.highlightAll(); // Apply Prism.js highlighting to all code blocks
+            Prism.highlightAll();
         }
     }, [blog, darkMode]);
 
@@ -105,18 +105,6 @@ const BlogDetails = () => {
                             className={`prose max-w-none ${darkMode ? 'prose-invert' : ''}`}
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
-                        {/* <div className="flex items-center mt-6 space-x-4">
-                            <button
-                                className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
-                            >
-                                <FiBookmark className="mr-2" /> Bookmark
-                            </button>
-                            <button
-                                className={`flex items-center font-medium ${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'}`}
-                            >
-                                <FiShare2 className="mr-2" /> Share
-                            </button>
-                        </div> */}
                     </article>
 
                     {/* Quick Links - Sticky Sidebar */}
