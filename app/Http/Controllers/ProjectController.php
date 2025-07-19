@@ -22,7 +22,6 @@ class ProjectController extends Controller
             return response()->json($response, 200);
 
         } catch (Exception $e) {
-        
             $response = getResponse(500, [], ['Something went wrong']);
             Log::error('Error fetching projects: ' . $e->getMessage(), [
                 'exception' => $e,

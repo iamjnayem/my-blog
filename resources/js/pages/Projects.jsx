@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import QuickLinks from '../components/QuickLinks';
 
 const Projects = ({ darkMode }) => {
-
+    console.log('Rendering Projects page');
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
+
         const fetchProjects = async () => {
             try {
+                console.log('Fetching project list  from API');
                 const response = await fetch('/api/projects');
+                console.log(`Response status: ${response.status}`);
                 if (!response.ok) throw new Error('Failed to fetch projects');
                 const data = await response.json();
                 setProjects(data.data || []);

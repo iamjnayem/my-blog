@@ -20,7 +20,7 @@ const ProjectDetails = () => {
                 const response = await fetch(`/api/projects/${slug}`);
                 if (!response.ok) throw new Error('Failed to fetch project');
                 const data = await response.json();
-                if (data.code !== "200") throw new Error(data.message || 'Something went wrong');
+                if (data.code != "200") throw new Error(data.message || 'Something went wrong');
                 setProject(data.data);
             } catch (err) {
                 setError(err.message);
